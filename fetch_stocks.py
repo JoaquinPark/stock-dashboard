@@ -90,11 +90,14 @@ def parse_num(text):
 
 def fetch_closing_price(code):
     """
-    네이버 금융 일별시세에서 가장 최근 거래일 종가(확정값)를 가져옵니다.
-    URL: https://finance.naver.com/item/sise_day.naver?code=005380&page=1
-    테이블 첫 행 = 가장 최근 거래일, 두 번째 열 = 종가
+    네이버 금융 일별시세에서 전일 확정 종가를 가져옵니다.
+    장 운영 중에는 오늘 데이터(장중가)가 첫 행에 있으므로
+    KST 기준 오늘 날짜와 다른 첫 번째 행 = 전일 확정 종가를 사용합니다.
     """
     url = f"https://finance.naver.com/item/sise_day.naver?code={code}&page=1"
+    kst = timezone(timedelta(hours=9))
+    today_str = datetime.now(kst).strftime("%Y.%m.%d")
+
     try:
         res = SESSION.get(url, timeout=10)
         res.encoding = "euc-kr"
@@ -107,10 +110,15 @@ def fetch_closing_price(code):
             date_txt  = tds[0].get_text(strip=True)
             close_txt = tds[1].get_text(strip=True)
             # 날짜 형식 YYYY.MM.DD 확인
-            if re.match(r"\d{4}\.\d{2}\.\d{2}", date_txt):
-                price = parse_num(close_txt)
-                if price and price > 0:
-                    return int(price), date_txt
+            if not re.match(r"\d{4}\.\d{2}\.\d{2}", date_txt):
+                continue
+            # 오늘 날짜 행은 장중가이므로 건너뜀 → 전일 확정 종가 사용
+            if date_txt == today_str:
+                continue
+            price = parse_num(close_txt)
+            if price and price > 0:
+                return int(price), date_txt
+
     except Exception as e:
         print(f"    [종가 오류] {code}: {e}")
     return None, None
