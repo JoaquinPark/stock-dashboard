@@ -1,7 +1,10 @@
 """
 fetch_stocks.py
-네이버 금융에서 전일 종가, 시총, 52주 고저가, PER, PBR을 수집하여
-stock-data.json으로 저장합니다.
+네이버 금융 일별시세 API를 사용하여 확정 종가를 수집합니다.
+
+핵심 변경:
+  - 종가: finance.naver.com/item/sise_day.naver (일별시세 — 장 종료 후 확정값)
+  - 시총/52주/PER/PBR: finance.naver.com/item/main.nhn
 """
 
 import json
@@ -12,7 +15,6 @@ from datetime import datetime, timezone, timedelta
 import requests
 from bs4 import BeautifulSoup
 
-# ── 종목 마스터 ──────────────────────────────────────────
 STOCKS = {
     "hyundai": [
         {"code": "005380", "name": "현대자동차"},
@@ -64,129 +66,150 @@ STOCKS = {
     ],
 }
 
-HEADERS = {
+SESSION = requests.Session()
+SESSION.headers.update({
     "User-Agent": (
-        "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) "
-        "AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1"
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
     ),
-    "Referer": "https://finance.naver.com/",
     "Accept-Language": "ko-KR,ko;q=0.9",
-}
+    "Referer": "https://finance.naver.com/",
+})
 
 
-def parse_number(text):
-    """'1,234,567' 또는 '1,234.56' 형태의 문자열을 숫자로 변환"""
+def parse_num(text):
     if not text:
         return None
-    text = text.strip().replace(",", "").replace("+", "").replace("%", "")
+    t = text.strip().replace(",", "").replace("+", "").replace("%", "")
     try:
-        return float(text)
+        return float(t)
     except ValueError:
         return None
 
 
-def fetch_stock(code):
-    """네이버 금융 종목 페이지에서 데이터 수집"""
-    url = f"https://finance.naver.com/item/main.nhn?code={code}"
+def fetch_closing_price(code):
+    """
+    네이버 금융 일별시세에서 가장 최근 거래일 종가(확정값)를 가져옵니다.
+    URL: https://finance.naver.com/item/sise_day.naver?code=005380&page=1
+    테이블 첫 행 = 가장 최근 거래일, 두 번째 열 = 종가
+    """
+    url = f"https://finance.naver.com/item/sise_day.naver?code={code}&page=1"
     try:
-        res = requests.get(url, headers=HEADERS, timeout=10)
+        res = SESSION.get(url, timeout=10)
         res.encoding = "euc-kr"
         soup = BeautifulSoup(res.text, "html.parser")
 
-        # ── 현재가(전일 종가) ──
-        price_tag = soup.select_one("p.no_today .blind")
-        price = parse_number(price_tag.get_text()) if price_tag else None
+        for row in soup.select("table.type2 tr"):
+            tds = row.select("td")
+            if len(tds) < 2:
+                continue
+            date_txt  = tds[0].get_text(strip=True)
+            close_txt = tds[1].get_text(strip=True)
+            # 날짜 형식 YYYY.MM.DD 확인
+            if re.match(r"\d{4}\.\d{2}\.\d{2}", date_txt):
+                price = parse_num(close_txt)
+                if price and price > 0:
+                    return int(price), date_txt
+    except Exception as e:
+        print(f"    [종가 오류] {code}: {e}")
+    return None, None
 
-        # ── 시가총액 ──
-        mcap = None
+
+def fetch_stock_info(code):
+    """
+    네이버 금융 종목 메인 페이지에서 시총, 52주 고저가, PER, PBR 수집
+    """
+    url = f"https://finance.naver.com/item/main.nhn?code={code}"
+    mcap = high52 = low52 = per = pbr = None
+    try:
+        res = SESSION.get(url, timeout=10)
+        res.encoding = "euc-kr"
+        soup = BeautifulSoup(res.text, "html.parser")
+
         for dt in soup.select("table.no_info dt"):
-            if "시가총액" in dt.get_text():
-                dd = dt.find_next_sibling("dd")
-                if dd:
-                    # "12조 3,456억" 형태 → 조 단위 float
-                    raw = dd.get_text(strip=True)
-                    match_jo = re.search(r"([\d,]+)조", raw)
-                    match_eok = re.search(r"([\d,]+)억", raw)
-                    val = 0.0
-                    if match_jo:
-                        val += float(match_jo.group(1).replace(",", ""))
-                    if match_eok:
-                        val += float(match_eok.group(1).replace(",", "")) / 10000
-                    mcap = round(val, 2) if val > 0 else None
-                break
+            label = dt.get_text().replace(" ", "")
+            dd = dt.find_next_sibling("dd")
+            if not dd:
+                continue
+            raw = dd.get_text(strip=True)
 
-        # ── 52주 최고/최저 ──
-        high52 = low52 = None
-        for dt in soup.select("table.no_info dt"):
-            text = dt.get_text()
-            if "52주최고" in text.replace(" ", ""):
-                dd = dt.find_next_sibling("dd")
-                if dd:
-                    high52 = parse_number(dd.get_text())
-            if "52주최저" in text.replace(" ", ""):
-                dd = dt.find_next_sibling("dd")
-                if dd:
-                    low52 = parse_number(dd.get_text())
+            if "시가총액" in label:
+                jo  = re.search(r"([\d,]+)조", raw)
+                eok = re.search(r"([\d,]+)억", raw)
+                val = 0.0
+                if jo:
+                    val += float(jo.group(1).replace(",", ""))
+                if eok:
+                    val += float(eok.group(1).replace(",", "")) / 10000
+                mcap = round(val, 2) if val > 0 else None
 
-        # ── PER / PBR ──
-        per = pbr = None
+            elif "52주최고" in label:
+                high52 = parse_num(raw)
+
+            elif "52주최저" in label:
+                low52 = parse_num(raw)
+
         for tag in soup.select("em#_per, em#_pbr"):
-            val = parse_number(tag.get_text())
+            val = parse_num(tag.get_text())
             if tag.get("id") == "_per":
                 per = val
             elif tag.get("id") == "_pbr":
                 pbr = val
 
-        return {
-            "price": int(price) if price else None,
-            "marketCap": mcap,
-            "h52": int(high52) if high52 else None,
-            "l52": int(low52) if low52 else None,
-            "per": round(per, 2) if per else None,
-            "pbr": round(pbr, 2) if pbr else None,
-        }
-
     except Exception as e:
-        print(f"  ERROR {code}: {e}")
-        return {}
+        print(f"    [종목정보 오류] {code}: {e}")
+
+    return {
+        "marketCap": mcap,
+        "h52": int(high52) if high52 else None,
+        "l52": int(low52) if low52 else None,
+        "per": round(per, 2) if per else None,
+        "pbr": round(pbr, 2) if pbr else None,
+    }
 
 
 def main():
     kst = timezone(timedelta(hours=9))
     now = datetime.now(kst)
-    date_str = now.strftime("%Y년 %m월 %d일")
 
     result = {
         "updated": now.strftime("%Y-%m-%d %H:%M KST"),
-        "date_label": date_str,
+        "date_label": None,
         "stocks": {},
     }
 
-    all_stocks = []
-    for group, items in STOCKS.items():
-        for s in items:
-            all_stocks.append((group, s))
+    all_stocks = [(g, s) for g, items in STOCKS.items() for s in items]
+    print(f"총 {len(all_stocks)}개 종목 수집 ({now.strftime('%Y-%m-%d %H:%M KST')})\n")
 
-    print(f"총 {len(all_stocks)}개 종목 수집 시작...")
+    latest_date = None
 
     for group, s in all_stocks:
-        code = s["code"]
-        name = s["name"]
-        print(f"  [{group}] {name} ({code}) ...", end=" ")
-        data = fetch_stock(code)
-        result["stocks"][code] = {
-            "name": name,
-            "group": group,
-            **data,
-        }
-        print(f"종가={data.get('price', '?'):,}" if data.get("price") else "실패")
-        time.sleep(0.4)   # 서버 부하 방지
+        code, name = s["code"], s["name"]
+        print(f"  [{group}] {name} ({code})", end=" ... ")
 
-    # stock-data.json 저장
+        price, trade_date = fetch_closing_price(code)
+        if trade_date and not latest_date:
+            latest_date = trade_date
+        time.sleep(0.4)
+
+        info = fetch_stock_info(code)
+        time.sleep(0.4)
+
+        result["stocks"][code] = {"name": name, "group": group, "price": price, **info}
+        print(f"종가={price:,}원" if price else "종가=수집실패")
+
+    # 날짜 레이블: "2026.04.22" → "2026년 04월 22일"
+    if latest_date:
+        p = latest_date.split(".")
+        result["date_label"] = f"{p[0]}년 {p[1]}월 {p[2]}일"
+    else:
+        result["date_label"] = now.strftime("%Y년 %m월 %d일")
+
     with open("stock-data.json", "w", encoding="utf-8") as f:
         json.dump(result, f, ensure_ascii=False, indent=2)
 
-    print(f"\n완료! stock-data.json 저장됨 ({date_str})")
+    print(f"\n✅ 완료! 기준일: {result['date_label']}")
 
 
 if __name__ == "__main__":
