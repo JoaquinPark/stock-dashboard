@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>현대차·삼성·SK 그룹 상장사 주가 현황</title>
+<style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+
+:root {
+  --bg:      #f2f3f5;
+  --white:   #ffffff;
+  --text:    #111827;
+  --text2:   #374151;
+  --muted:   #9ca3af;
+  --border:  #e5e7eb;
+  --up:      #dc2626;
+  --down:    #2563eb;
+  --flat:    #6b7280;
+  --hyundai: #002c5f;
+  --samsung: #1428a0;
+  --sk:      #ea0029;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html { font-size: 14px; }
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* ── HEADER ── */
+.header {
+  background: var(--white);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px 10px;
+  padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  position: sticky; top: 0; z-index: 200;
+}
+.header-row1 {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: 8px;
+}
+.header-title { font-size: 14px; font-weight: 800; letter-spacing: -0.4px; }
+
+.refresh-btn {
+  background: var(--bg); border: 1px solid var(--border); color: var(--text2);
+  padding: 7px 13px; border-radius: 8px; font-family: inherit;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 5px; min-height: 36px;
+}
+.refresh-btn:active { background: var(--text); color: #fff; border-color: var(--text); }
+.refresh-btn.loading { opacity: 0.45; pointer-events: none; }
+.refresh-btn.loading svg { animation: spin 1s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.source-row {
+  display: flex; align-items: center; gap: 5px; flex-wrap: nowrap;
+  overflow-x: auto; scrollbar-width: none;
+}
+.source-row::-webkit-scrollbar { display: none; }
+
+.badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  border-radius: 99px; padding: 3px 9px;
+  font-size: 11px; font-weight: 500; white-space: nowrap; flex-shrink: 0;
+}
+.badge-blue { background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; }
+.badge-green { background: #f0fdf4; border: 1px solid #bbf7d0; color: #15803d; }
+.badge-gray  { background: #f9fafb; border: 1px solid #d1d5db; color: var(--text2); }
+.update-time { font-size: 11px; color: var(--muted); margin-left: auto; flex-shrink: 0; white-space: nowrap; }
+
+/* ── 그룹 요약 카드 (클릭 없는 정보 전달용) ── */
+.tabs-wrap { padding: 12px 12px 0; }
+.tabs { display: flex; gap: 8px; }
+
+.tab {
+  flex: 1;
+  padding: 12px 8px 11px;
+  border-radius: 12px;
+  text-align: center;
+  border: none;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer;
+}
+.tab[data-g="hyundai"] { background: var(--hyundai); color: #fff; box-shadow: 0 3px 12px rgba(0,44,95,0.28); }
+.tab[data-g="samsung"]  { background: var(--samsung); color: #fff; box-shadow: 0 3px 12px rgba(20,40,160,0.28); }
+.tab[data-g="sk"]       { background: var(--sk);      color: #fff; box-shadow: 0 3px 12px rgba(234,0,41,0.25); }
+
+.tab-name  { display: block; font-size: 14px; font-weight: 800; letter-spacing: -0.3px; margin-bottom: 5px; line-height: 1.2; color: rgba(255,255,255,0.9); }
+.tab-bottom { display: flex; align-items: baseline; justify-content: center; gap: 5px; }
+.tab-mcap-label { font-size: 10px; font-weight: 600; color: rgba(255,255,255,0.65); margin-right: 2px; }
+.tab-mcap  { font-size: 12px; font-weight: 700; letter-spacing: -0.3px; line-height: 1; color: rgba(255,255,255,0.85); }
+.tab-count { font-size: 10px; font-weight: 500; color: rgba(255,255,255,0.65); }
+
+/* ── STOCKS ── */
+.stocks-wrap { padding: 10px 12px calc(24px + env(safe-area-inset-bottom, 0px)); }
+
+/* 안내 노트 */
+.data-note {
+  margin: 0 0 10px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 13px;
+  font-size: 10.5px;
+  color: #9ca3af;       /* 연한 회색 */
+  line-height: 1.7;
+}
+.data-note strong { font-weight: 600; color: #b0b7c3; }
+.data-note .formula {
+  display: inline;
+  background: #f0f2f5;
+  border-radius: 4px;
+  padding: 0 5px;
+  font-size: 10px;
+  color: #b0b7c3;
+}
+
+/* ── GROUP SECTION ── */
+.group-section { display: block; }
+.group-section + .group-section { margin-top: 6px; }
+
+.list-hdr {
+  display: flex; align-items: center;
+  padding: 12px 2px 6px;
+}
+.list-hdr-name {
+  font-size: 12px; font-weight: 800; letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+.list-hdr-name.hyundai { color: var(--hyundai); }
+.list-hdr-name.samsung  { color: var(--samsung); }
+.list-hdr-name.sk       { color: var(--sk); }
+
+/* ── TABLE ── */
+.stock-table {
+  background: var(--white);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+}
+
+/* 5컬럼: 종목 | 시총 | 주가 | PER | PBR */
+.col-hdr,
+.stock-row,
+.skel-row {
+  display: grid;
+  grid-template-columns: 1fr 58px 100px 40px 40px;
+  padding-left: 14px;
+  padding-right: 12px;
+}
+
+.col-hdr {
+  padding-top: 8px; padding-bottom: 8px;
+  background: #f8f9fa;
+  border-bottom: 1px solid var(--border);
+  font-size: 10px; font-weight: 700; color: var(--muted);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  align-items: center;
+}
+.col-hdr > span { padding: 0 2px; }
+.col-hdr > span:not(:first-child) { text-align: right; }
+
+.stock-row {
+  padding-top: 8px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer; transition: background 0.1s;
+  align-items: center;
+}
+.stock-row:last-child { border-bottom: none; }
+.stock-row:hover  { background: #f9fafb; }
+.stock-row:active { background: #f0f2f5; }
+.stock-row > div  { padding: 0 2px; }
+
+/* 종목 셀 */
+.sname { font-size: 13.5px; font-weight: 700; color: var(--text); line-height: 1.25; }
+.scode { font-size: 10px; color: var(--muted); font-weight: 400; margin-top: 2px; }
+
+/* 시총 */
+.c-mcap { text-align: right; }
+.smcap  { font-size: 11.5px; font-weight: 500; color: var(--text2); padding-top: 1px; line-height: 1.3; }
+
+/* 주가 + 52주 */
+.c-price { text-align: right; }
+.sprice  { font-size: 14px; font-weight: 800; line-height: 1.2; letter-spacing: -0.3px; color: var(--text); }
+.s52 { font-size: 9.5px; color: var(--muted); font-weight: 400; line-height: 1.55; margin-top: 2px; }
+
+
+/* PER / PBR */
+.c-per, .c-pbr { text-align: right; }
+.sper, .spbr   { font-size: 11px; font-weight: 500; color: var(--text2); line-height: 1.4; }
+.sna { color: var(--muted); font-size: 10px; font-weight: 400; }
+
+/* SKELETON */
+.skeleton {
+  background: linear-gradient(90deg,#eff0f2 25%,#e4e5e8 50%,#eff0f2 75%);
+  background-size: 200% 100%; animation: shimmer 1.3s infinite; border-radius: 4px;
+  display: inline-block;
+}
+@keyframes shimmer { from{background-position:200% 0} to{background-position:-200% 0} }
+
+.skel-row {
+  padding-top: 11px; padding-bottom: 11px;
+  border-bottom: 1px solid var(--border); align-items: center;
+}
+.skel-row:last-child { border-bottom: none; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="header">
+  <div class="header-row1">
+    <div class="header-title">현대차 / 삼성 / SK 그룹 상장사 주가 현황</div>
+    <button class="refresh-btn" id="refreshBtn" onclick="loadAll()">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+        <path d="M21 3v5h-5"/>
+        <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+        <path d="M8 16H3v5"/>
+      </svg>
+      새로고침
+    </button>
+  </div>
+  <div class="source-row">
+    <span class="badge badge-blue">
+      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      네이버 금융
+    </span>
+    <span class="badge badge-green">공정위 기업집단 · 보통주</span>
+    <span class="badge badge-gray">전 거래일 종가</span>
+  </div>
+</header>
+
+<!-- TABS -->
+<div class="tabs-wrap">
+  <div class="tabs">
+
+    <!-- 현대자동차그룹 카드 -->
+    <div class="tab" data-g="hyundai">
+      <span class="tab-name">현대자동차그룹</span>
+      <div class="tab-bottom">
+        <span class="tab-mcap-label">시총</span><span class="tab-mcap" id="mc-hyundai">—</span>
+        <span class="tab-count" id="mc-hyundai-n">—</span>
+      </div>
+    </div>
+
+    <!-- 삼성그룹 카드 -->
+    <div class="tab" data-g="samsung">
+      <span class="tab-name">삼성그룹</span>
+      <div class="tab-bottom">
+        <span class="tab-mcap-label">시총</span><span class="tab-mcap" id="mc-samsung">—</span>
+        <span class="tab-count" id="mc-samsung-n">—</span>
+      </div>
+    </div>
+
+    <!-- SK그룹 카드 -->
+    <div class="tab" data-g="sk">
+      <span class="tab-name">SK그룹</span>
+      <div class="tab-bottom">
+        <span class="tab-mcap-label">시총</span><span class="tab-mcap" id="mc-sk">—</span>
+        <span class="tab-count" id="mc-sk-n">—</span>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- STOCK LISTS -->
+<div class="stocks-wrap">
+
+  <!-- 안내 노트 -->
+  <div class="data-note">
+    <strong>주가</strong>: <span id="dataDateLabel">—</span>(전 거래일) 종가 · 출처: 네이버 금융<br>
+    <strong>시총·52주 최고/최저가·PER·PBR</strong>: 네이버 금융 공시 기준 참고값<br>
+    <strong>PER</strong> <span class="formula">주가 ÷ EPS(주당순이익)</span> &nbsp;
+    <strong>PBR</strong> <span class="formula">주가 ÷ BPS(주당순자산)</span>
+  </div>
+
+  <div class="group-section" id="sec-hyundai"></div>
+  <div class="group-section" id="sec-samsung"></div>
+  <div class="group-section" id="sec-sk"></div>
+</div>
+
+<script>
+const STOCKS = {
+  hyundai: [
+    { code:'005380', name:'현대자동차' },
+    { code:'000270', name:'기아' },
+    { code:'012330', name:'현대모비스' },
+    { code:'064350', name:'현대로템' },
+    { code:'000720', name:'현대건설' },
+    { code:'086280', name:'현대글로비스' },
+    { code:'307950', name:'현대오토에버' },
+    { code:'004020', name:'현대제철' },
+    { code:'011210', name:'현대위아' },
+    { code:'214320', name:'이노션' },
+    { code:'001500', name:'현대차증권' },
+    { code:'004560', name:'현대비앤지스틸' },
+  ],
+  samsung: [
+    { code:'005930', name:'삼성전자' },
+    { code:'207940', name:'삼성바이오로직스' },
+    { code:'032830', name:'삼성생명' },
+    { code:'028260', name:'삼성물산' },
+    { code:'009150', name:'삼성전기' },
+    { code:'006400', name:'삼성SDI' },
+    { code:'010140', name:'삼성중공업' },
+    { code:'000810', name:'삼성화재' },
+    { code:'0126Z0', name:'삼성에피스홀딩스' },
+    { code:'018260', name:'삼성에스디에스' },
+    { code:'016360', name:'삼성증권' },
+    { code:'028050', name:'삼성E&A' },
+    { code:'029780', name:'삼성카드' },
+  ],
+  sk: [
+    { code:'000660', name:'SK하이닉스' },
+    { code:'402340', name:'SK스퀘어' },
+    { code:'034730', name:'SK㈜' },
+    { code:'096770', name:'SK이노베이션' },
+    { code:'017670', name:'SK텔레콤' },
+    { code:'326030', name:'SK바이오팜' },
+    { code:'011790', name:'SKC' },
+    { code:'302440', name:'SK바이오사이언스' },
+    { code:'018670', name:'SK가스' },
+    { code:'361610', name:'SK아이이테크놀로지' },
+    { code:'395400', name:'SK리츠' },
+    { code:'475150', name:'SK이터닉스' },
+    { code:'100090', name:'SK오션플랜트' },
+    { code:'001740', name:'SK네트웍스' },
+    { code:'006120', name:'SK디스커버리' },
+    { code:'285130', name:'SK케미칼' },
+    { code:'210980', name:'SK디앤디' },
+  ]
+};
+
+const SEED = {
+  // ── 현대자동차그룹 (2026.04.21 네이버 금융 종가) ──
+  '005380':{ p:546000,  ch:19000,  cr:3.61,  mc:143.4,  h52:687000,  l52:139300,  per:13.66, pbr:1.06 },
+  '000270': { p:160400,  ch:8800,   cr:5.81,  mc:62.6,   h52:212500,  l52:86200,   per:7.40,  pbr:1.00 },
+  '012330':{ p:406500,  ch:41000,  cr:11.22, mc:36.9,   h52:531000,  l52:232000,  per:8.43,  pbr:0.73 },
+  '064350':{ p:206000,  ch:30500,  cr:17.37, mc:22.5,   h52:274000,  l52:101000,  per:24.05, pbr:7.18 },
+  '000720':{ p:128900,  ch:16200,  cr:14.39, mc:14.4,   h52:198400,  l52:38200,   per:29.03, pbr:1.75 },
+  '086280':{ p:237000,  ch:5000,   cr:2.15,  mc:17.8,   h52:303500,  l52:104500,  per:9.86,  pbr:1.71 },
+  '307950':{ p:438000,  ch:0,      cr:0.00,  mc:12.0,   h52:543000,  l52:82500,   per:53.80, pbr:6.45 },
+  '004020': { p:34750,   ch:4800,   cr:16.06, mc:4.6,    h52:50400,   l52:23350,   per:17.29, pbr:0.24 },
+  '011210':{ p:80300,   ch:12100,  cr:17.73, mc:2.2,    h52:115900,  l52:36200,   per:11.26, pbr:0.59 },
+  '214320':{ p:18850,   ch:870,    cr:4.84,  mc:0.75,   h52:22000,   l52:16730,   per:7.37,  pbr:0.71 },
+  '001500':{ p:10670,   ch:1120,   cr:11.72, mc:0.66,   h52:15440,   l52:5730,    per:10.72, pbr:0.40 },
+  '004560':{ p:16830,   ch:2190,   cr:14.96, mc:0.25,   h52:25500,   l52:10450,   per:17.22, pbr:0.49 },
+  // ── 삼성그룹 (2026.04.21 네이버 금융 종가) ──
+  '005930':{ p:219000,  ch:4500,   cr:2.10,  mc:1279.2, h52:223000,  l52:53700,   per:6.01,  pbr:3.43 },
+  '207940':{ p:1608000, ch:4000,   cr:0.25,  mc:74.4,   h52:1987000, l52:1445253, per:40.23, pbr:9.99 },
+  '032830':{ p:258000,  ch:4500,   cr:1.78,  mc:51.6,   h52:270500,  l52:78100,   per:20.70, pbr:0.73 },
+  '028260':{ p:306000,  ch:4500,   cr:1.50,  mc:49.6,   h52:364000,  l52:113000,  per:19.89, pbr:1.00 },
+  '009150':{ p:772000,  ch:92000,  cr:13.53, mc:57.7,   h52:772000,  l52:116200,  per:53.26, pbr:6.16 },
+  '006400': { p:480000,  ch:17500,  cr:3.78,  mc:38.7,   h52:493500,  l52:157700,  per:423.0, pbr:1.77 },
+  '010140':{ p:28900,   ch:2700,   cr:10.31, mc:25.5,   h52:33450,   l52:13750,   per:20.97, pbr:5.97 },
+  '000810':{ p:487500,  ch:4500,   cr:0.93,  mc:22.4,   h52:681000,  l52:347500,  per:11.03, pbr:0.97 },
+  '0126Z0':{ p:608000,  ch:3000,   cr:0.50,  mc:15.1,   h52:773000,  l52:329000,  per:null,  pbr:2.58 },
+  '018260':{ p:188800,  ch:5300,   cr:2.89,  mc:14.6,   h52:203000,  l52:114200,  per:18.06, pbr:1.47 },
+  '016360':{ p:110400,  ch:2400,   cr:2.22,  mc:9.8,    h52:125500,  l52:44000,   per:7.25,  pbr:1.22 },
+  '028050':{ p:50200,   ch:1500,   cr:3.08,  mc:9.8,    h52:54600,   l52:18700,   per:14.16, pbr:2.08 },
+  '029780':{ p:54500,   ch:1200,   cr:2.25,  mc:6.3,    h52:70400,   l52:40050,   per:9.51,  pbr:0.65 },
+  // ── SK그룹 (2026.04.21 네이버 금융 종가) ──
+  '000660':{ p:1224000, ch:58000,  cr:4.97,  mc:872.8,  h52:1247000, l52:173300,  per:5.31,  pbr:7.15 },
+  '402340':{ p:709000,  ch:21000,  cr:3.05,  mc:93.5,   h52:727000,  l52:83000,   per:3.77,  pbr:3.38 },
+  '034730':{ p:377000,  ch:9500,   cr:2.58,  mc:27.3,   h52:430000,  l52:127000,  per:8.58,  pbr:0.82 },
+  '096770':{ p:133200,  ch:3200,   cr:2.46,  mc:22.5,   h52:166000,  l52:80300,   per:77.90, pbr:1.02 },
+  '017670':{ p:99800,   ch:1300,   cr:1.32,  mc:21.4,   h52:103600,  l52:50400,   per:17.37, pbr:1.65 },
+  '326030':{ p:103200,  ch:3200,   cr:3.20,  mc:8.0,    h52:147800,  l52:86900,   per:29.50, pbr:9.97 },
+  '011790':{ p:114900,  ch:4600,   cr:4.17,  mc:4.3,    h52:130181,  l52:80740,   per:null,  pbr:4.73 },
+  '302440':{ p:43900,   ch:1200,   cr:2.81,  mc:3.4,    h52:61300,   l52:38700,   per:null,  pbr:1.92 },
+  '018670':{ p:245000,  ch:5000,   cr:2.08,  mc:2.2,    h52:319500,  l52:203000,  per:9.00,  pbr:0.75 },
+  '361610':{ p:27600,   ch:1600,   cr:6.16,  mc:2.2,    h52:36950,   l52:16700,   per:null,  pbr:0.87 },
+  '395400': { p:6895,    ch:185,    cr:2.76,  mc:2.0,    h52:6900,    l52:4440,    per:62.84, pbr:1.06 },
+  '475150':{ p:54600,   ch:2100,   cr:4.00,  mc:1.8,    h52:76700,   l52:11890,   per:45.12, pbr:6.73 },
+  '100090':{ p:23150,   ch:950,    cr:4.28,  mc:1.4,    h52:31600,   l52:14280,   per:28.41, pbr:1.77 },
+  '001740':{ p:5380,    ch:180,    cr:3.46,  mc:1.1,    h52:6500,    l52:3915,    per:18.04, pbr:0.51 },
+  '006120':{ p:59000,   ch:1500,   cr:2.61,  mc:1.0,    h52:68300,   l52:39850,   per:9.02,  pbr:0.37 },
+  '285130':{ p:58100,   ch:1800,   cr:3.20,  mc:1.0,    h52:81800,   l52:36900,   per:25.13, pbr:0.49 },
+  '210980':{ p:12970,   ch:470,    cr:3.76,  mc:0.24,   h52:13810,   l52:8340,    per:34.07, pbr:0.42 },
+};
+
+const GRP_NAME = { hyundai:'현대자동차그룹', samsung:'삼성그룹', sk:'SK그룹' };
+let stockData = {};
+
+// ── 시총 포맷 ──
+// 개별 종목: 한자리(0~9조)는 소수점 1자리, 그 외는 정수, 1000조 이상도 O,OOO조
+// 그룹 합계: 항상 O,OOO조 (쉼표 구분)
+function fmtMcap(t, forceComma) {
+  if (!t) return '—';
+  if (forceComma || t >= 1000) {
+    // 1,279조 형태
+    return Math.round(t).toLocaleString('ko-KR') + '조';
+  }
+  if (t < 10) return t.toFixed(1) + '조';   // 한 자리: 소수점 1자리
+  return Math.floor(t) + '조';
+}
+
+// ── 데이터 로딩: stock-data.json → 없으면 SEED 폴백 ──
+async function loadAll() {
+  document.getElementById('refreshBtn').classList.add('loading');
+  showSkeletons();
+
+  let jsonData = null;
+  try {
+    // GitHub Pages에서 같은 경로의 stock-data.json을 fetch
+    const res = await fetch('stock-data.json?t=' + Date.now(), { cache: 'no-store' });
+    if (res.ok) jsonData = await res.json();
+  } catch (e) {
+    console.warn('stock-data.json 로드 실패, 시드 데이터 사용:', e);
+  }
+
+  const all = [...STOCKS.hyundai, ...STOCKS.samsung, ...STOCKS.sk];
+  all.forEach(s => {
+    const live = jsonData?.stocks?.[s.code];
+    const seed = SEED[s.code] || {};
+    stockData[s.code] = {
+      name:      s.name,
+      price:     live?.price     ?? seed.p   ?? 0,
+      marketCap: live?.marketCap ?? seed.mc  ?? null,
+      h52:       live?.h52       ?? seed.h52 ?? null,
+      l52:       live?.l52       ?? seed.l52 ?? null,
+      per:       live?.per       ?? seed.per ?? null,
+      pbr:       live?.pbr       ?? seed.pbr ?? null,
+    };
+  });
+
+  // 날짜 레이블 업데이트
+  const dateLabel = jsonData?.date_label ?? '—';
+  const el = document.getElementById('dataDateLabel');
+  if (el) el.textContent = dateLabel + ' ';
+
+  renderAll();
+  updateMcap();
+  document.getElementById('refreshBtn').classList.remove('loading');
+}
+
+function updateMcap() {
+  ['hyundai', 'samsung', 'sk'].forEach(g => {
+    let sum = 0;
+    STOCKS[g].forEach(s => { sum += stockData[s.code]?.marketCap || 0; });
+    // 그룹 합계는 항상 쉼표 O,OOO조 형태
+    document.getElementById(`mc-${g}`).textContent   = fmtMcap(sum, true);
+    document.getElementById(`mc-${g}-n`).textContent = STOCKS[g].length + '개 종목';
+  });
+}
+
+// ── 렌더링 ──
+const fp  = n => (n != null ? n.toLocaleString('ko-KR') : '—');
+const dir = c => c > 0 ? 'up' : c < 0 ? 'down' : 'flat';
+const arw = c => (c > 0 ? '▲' : c < 0 ? '▼' : '') + Math.abs(c).toLocaleString();
+
+const COL_HDR = `<div class="col-hdr">
+  <span>종목</span>
+  <span>시총</span>
+  <span>전일 종가</span>
+  <span>PER</span>
+  <span>PBR</span>
+</div>`;
+
+function rowHTML(s) {
+  const d = stockData[s.code]; if (!d) return '';
+  const per = d.per != null ? d.per.toFixed(1) : '<span class="sna">—</span>';
+  const pbr = d.pbr != null ? d.pbr.toFixed(2) : '<span class="sna">—</span>';
+  const mc  = d.marketCap ? fmtMcap(d.marketCap) : '<span class="sna">—</span>';
+  const l52txt = d.l52 != null
+    ? `52주 최저 ${fp(d.l52)}<br>52주 최고 ${fp(d.h52)}`
+    : '—';
+
+  return `<div class="stock-row" onclick="openNaver('${s.code}')">
+    <div>
+      <div class="sname">${d.name}</div>
+      <div class="scode">${s.code}</div>
+    </div>
+    <div class="c-mcap"><div class="smcap">${mc}</div></div>
+    <div class="c-price">
+      <div class="sprice">${fp(d.price)}</div>
+      <div class="s52">${l52txt}</div>
+    </div>
+    <div class="c-per"><div class="sper">${per}</div></div>
+    <div class="c-pbr"><div class="spbr">${pbr}</div></div>
+  </div>`;
+}
+
+function tableHTML(g) {
+  const stocks = [...STOCKS[g]].sort(
+    (a, b) => (stockData[b.code]?.marketCap || 0) - (stockData[a.code]?.marketCap || 0)
+  );
+  const up = stocks.filter(s => (stockData[s.code]?.change || 0) > 0).length;
+  const dn = stocks.filter(s => (stockData[s.code]?.change || 0) < 0).length;
+
+  const grpClass = g === 'hyundai' ? 'hyundai' : g === 'samsung' ? 'samsung' : 'sk';
+
+  return `<div class="list-hdr">
+    <span class="list-hdr-name ${grpClass}">${GRP_NAME[g]} · ${stocks.length}종목</span>
+  </div>
+  <div class="stock-table">
+    ${COL_HDR}
+    ${stocks.map(rowHTML).join('')}
+  </div>`;
+}
+
+function renderAll() {
+  ['hyundai', 'samsung', 'sk'].forEach(g => {
+    document.getElementById(`sec-${g}`).innerHTML = tableHTML(g);
+  });
+}
+
+function showSkeletons() {
+  const skelRow = () => `<div class="skel-row">
+    <div>
+      <div class="skeleton" style="width:76px;height:14px;margin-bottom:5px;"></div>
+      <div class="skeleton" style="width:42px;height:10px;"></div>
+    </div>
+    <div style="text-align:right"><div class="skeleton" style="width:38px;height:12px;display:inline-block;"></div></div>
+    <div style="text-align:right">
+      <div class="skeleton" style="width:60px;height:15px;display:inline-block;margin-bottom:4px;"></div><br>
+      <div class="skeleton" style="width:90px;height:9px;display:inline-block;"></div>
+    </div>
+    <div style="text-align:right"><div class="skeleton" style="width:26px;height:12px;display:inline-block;"></div></div>
+    <div style="text-align:right"><div class="skeleton" style="width:26px;height:12px;display:inline-block;"></div></div>
+  </div>`;
+  const grpColor = { hyundai:'var(--hyundai)', samsung:'var(--samsung)', sk:'var(--sk)' };
+  ['hyundai', 'samsung', 'sk'].forEach(g => {
+    document.getElementById(`sec-${g}`).innerHTML =
+      `<div class="list-hdr"><span class="list-hdr-name ${g}" style="color:${grpColor[g]}">${GRP_NAME[g]}</span></div>
+       <div class="stock-table">${COL_HDR}${Array(5).fill(skelRow()).join('')}</div>`;
+  });
+}
+
+
+function openNaver(code) {
+  window.open(`https://m.stock.naver.com/domestic/stock/${code}/home`, '_blank');
+}
+
+setInterval(loadAll, 5 * 60 * 1000);
+loadAll();
+</script>
+</body>
+</html>
