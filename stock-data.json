@@ -1,5 +1,5 @@
 {
-  "updated": "2026-05-23 07:06 KST",
+  "updated": "2026-05-26 07:05 KST",
   "date_label": "2026년 05월 22일",
   "stocks": {
     "005380": {
@@ -30,7 +30,7 @@
       "h52": null,
       "l52": null,
       "per": 16.87,
-      "pbr": 1.17
+      "pbr": 1.14
     },
     "064350": {
       "name": "현대로템",
@@ -39,8 +39,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 29.2,
-      "pbr": 7.3
+      "per": 27.66,
+      "pbr": 6.98
     },
     "000720": {
       "name": "현대건설",
@@ -49,7 +49,7 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 45.27,
+      "per": 39.64,
       "pbr": 2.04
     },
     "086280": {
@@ -69,8 +69,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 94.83,
-      "pbr": 9.37
+      "per": 95.71,
+      "pbr": 9.5
     },
     "004020": {
       "name": "현대제철",
@@ -89,7 +89,7 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 24.86,
+      "per": 70.26,
       "pbr": 0.67
     },
     "214320": {
@@ -99,8 +99,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 9.18,
-      "pbr": 0.79
+      "per": 7.31,
+      "pbr": 0.77
     },
     "001500": {
       "name": "현대차증권",
@@ -139,8 +139,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 53.25,
-      "pbr": 8.78
+      "per": 45.97,
+      "pbr": 8.26
     },
     "032830": {
       "name": "삼성생명",
@@ -159,7 +159,7 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 29.69,
+      "per": 28.2,
       "pbr": 1.38
     },
     "009150": {
@@ -169,7 +169,7 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 147.27,
+      "per": 126.57,
       "pbr": 10.61
     },
     "006400": {
@@ -190,7 +190,7 @@
       "h52": null,
       "l52": null,
       "per": 46.75,
-      "pbr": 6.07
+      "pbr": 5.58
     },
     "000810": {
       "name": "삼성화재",
@@ -279,8 +279,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 29.36,
-      "pbr": 1.4
+      "per": 17.84,
+      "pbr": 1.2
     },
     "096770": {
       "name": "SK이노베이션",
@@ -299,7 +299,7 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 54.08,
+      "per": 60.26,
       "pbr": 1.7
     },
     "326030": {
@@ -309,8 +309,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 28.69,
-      "pbr": 9.42
+      "per": 21.96,
+      "pbr": 8.22
     },
     "011790": {
       "name": "SKC",
@@ -339,8 +339,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 10.21,
-      "pbr": 0.8
+      "per": 5.98,
+      "pbr": 0.74
     },
     "361610": {
       "name": "SK아이이테크놀로지",
@@ -350,7 +350,7 @@
       "h52": null,
       "l52": null,
       "per": null,
-      "pbr": 0.65
+      "pbr": 0.66
     },
     "395400": {
       "name": "SK리츠",
@@ -369,8 +369,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 48.19,
-      "pbr": 5.42
+      "per": 60.15,
+      "pbr": 5.52
     },
     "100090": {
       "name": "SK오션플랜트",
@@ -379,8 +379,8 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 30.18,
-      "pbr": 1.45
+      "per": 26.71,
+      "pbr": 1.43
     },
     "001740": {
       "name": "SK네트웍스",
@@ -389,7 +389,7 @@
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 37.33,
+      "per": 19.27,
       "pbr": 0.81
     },
     "006120": {
