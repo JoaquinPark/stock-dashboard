@@ -1,361 +1,361 @@
 {
-  "updated": "2026-06-26 07:19 KST",
-  "date_label": "2026년 06월 25일",
+  "updated": "2026-06-27 07:11 KST",
+  "date_label": "2026년 06월 26일",
   "stocks": {
     "005380": {
       "name": "현대자동차",
       "group": "hyundai",
-      "price": 503000,
+      "price": 480500,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 15.51,
-      "pbr": 1.1
+      "per": 14.81,
+      "pbr": 1.05
     },
     "000270": {
       "name": "기아",
       "group": "hyundai",
-      "price": 139500,
+      "price": 135300,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 7.85,
-      "pbr": 0.88
+      "per": 7.61,
+      "pbr": 0.85
     },
     "012330": {
       "name": "현대모비스",
       "group": "hyundai",
-      "price": 513000,
+      "price": 486500,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 13.4,
-      "pbr": 0.9
+      "per": 12.71,
+      "pbr": 0.86
     },
     "064350": {
       "name": "현대로템",
       "group": "hyundai",
-      "price": 183000,
+      "price": 169800,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 24.57,
-      "pbr": 6.2
+      "per": 22.8,
+      "pbr": 5.76
     },
     "000720": {
       "name": "현대건설",
       "group": "hyundai",
-      "price": 112600,
+      "price": 103300,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 29.69,
-      "pbr": 1.39
+      "per": 27.24,
+      "pbr": 1.27
     },
     "086280": {
       "name": "현대글로비스",
       "group": "hyundai",
-      "price": 188100,
+      "price": 180400,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 8.42,
-      "pbr": 1.36
+      "per": 8.07,
+      "pbr": 1.3
     },
     "307950": {
       "name": "현대오토에버",
       "group": "hyundai",
-      "price": 546000,
+      "price": 507000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 82.82,
-      "pbr": 8.22
+      "per": 76.9,
+      "pbr": 7.64
     },
     "004020": {
       "name": "현대제철",
       "group": "hyundai",
-      "price": 28150,
+      "price": 26450,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 521.3,
-      "pbr": 0.19
+      "per": 489.81,
+      "pbr": 0.18
     },
     "011210": {
       "name": "현대위아",
       "group": "hyundai",
-      "price": 62900,
+      "price": 59100,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 48.84,
-      "pbr": 0.46
+      "per": 45.89,
+      "pbr": 0.43
     },
     "214320": {
       "name": "이노션",
       "group": "hyundai",
-      "price": 18140,
+      "price": 17870,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 6.3,
-      "pbr": 0.66
+      "per": 6.2,
+      "pbr": 0.65
     },
     "001500": {
       "name": "현대차증권",
       "group": "hyundai",
-      "price": 8260,
+      "price": 7880,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 7.97,
-      "pbr": 0.31
+      "per": 7.61,
+      "pbr": 0.3
     },
     "004560": {
       "name": "현대비앤지스틸",
       "group": "hyundai",
-      "price": 11430,
+      "price": 10950,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 9.56,
-      "pbr": 0.33
+      "per": 9.16,
+      "pbr": 0.32
     },
     "005930": {
       "name": "삼성전자",
       "group": "samsung",
-      "price": 358500,
+      "price": 339500,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 28.98,
-      "pbr": 4.99
+      "per": 27.44,
+      "pbr": 4.72
     },
     "207940": {
       "name": "삼성바이오로직스",
       "group": "samsung",
-      "price": 1386000,
+      "price": 1343000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 45.03,
-      "pbr": 8.09
+      "per": 43.63,
+      "pbr": 7.84
     },
     "032830": {
       "name": "삼성생명",
       "group": "samsung",
-      "price": 447000,
+      "price": 432500,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 31.14,
-      "pbr": 0.99
+      "per": 30.13,
+      "pbr": 0.96
     },
     "028260": {
       "name": "삼성물산",
       "group": "samsung",
-      "price": 519000,
+      "price": 494500,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 34.8,
-      "pbr": 1.36
+      "per": 33.16,
+      "pbr": 1.3
     },
     "009150": {
       "name": "삼성전기",
       "group": "samsung",
-      "price": 1997000,
+      "price": 1993000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 188.63,
-      "pbr": 15.37
+      "per": 188.25,
+      "pbr": 15.34
     },
     "006400": {
       "name": "삼성SDI",
       "group": "samsung",
-      "price": 481000,
+      "price": 455000,
       "marketCap": null,
       "h52": null,
       "l52": null,
       "per": null,
-      "pbr": 1.68
+      "pbr": 1.59
     },
     "010140": {
       "name": "삼성중공업",
       "group": "samsung",
-      "price": 23800,
+      "price": 23000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 37.72,
-      "pbr": 4.5
+      "per": 36.45,
+      "pbr": 4.35
     },
     "000810": {
       "name": "삼성화재",
       "group": "samsung",
-      "price": 651000,
+      "price": 636000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 15.67,
-      "pbr": 1.15
+      "per": 15.31,
+      "pbr": 1.12
     },
     "0126Z0": {
       "name": "삼성에피스홀딩스",
       "group": "samsung",
-      "price": 440000,
+      "price": 426500,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 20.74,
-      "pbr": 1.82
+      "per": 20.11,
+      "pbr": 1.76
     },
     "018260": {
       "name": "삼성에스디에스",
       "group": "samsung",
-      "price": 190600,
+      "price": 189900,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 23.03,
-      "pbr": 1.49
+      "per": 22.94,
+      "pbr": 1.48
     },
     "016360": {
       "name": "삼성증권",
       "group": "samsung",
-      "price": 110800,
+      "price": 103800,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 8.18,
-      "pbr": 1.21
+      "per": 7.66,
+      "pbr": 1.13
     },
     "028050": {
       "name": "삼성E&A",
       "group": "samsung",
-      "price": 43200,
+      "price": 41450,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 13.6,
-      "pbr": 1.76
+      "per": 13.05,
+      "pbr": 1.69
     },
     "029780": {
       "name": "삼성카드",
       "group": "samsung",
-      "price": 46400,
+      "price": 46050,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 8.7,
-      "pbr": 0.57
+      "per": 8.64,
+      "pbr": 0.56
     },
     "000660": {
       "name": "SK하이닉스",
       "group": "sk",
-      "price": 2917000,
+      "price": 2673000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 28.18,
-      "pbr": 12.27
+      "per": 25.82,
+      "pbr": 11.24
     },
     "402340": {
       "name": "SK스퀘어",
       "group": "sk",
-      "price": 1899000,
+      "price": 1720000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 16.13,
-      "pbr": 6.94
+      "per": 14.61,
+      "pbr": 6.29
     },
     "034730": {
       "name": "SK㈜",
       "group": "sk",
-      "price": 858000,
+      "price": 815000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 23.85,
-      "pbr": 1.6
+      "per": 22.65,
+      "pbr": 1.52
     },
     "096770": {
       "name": "SK이노베이션",
       "group": "sk",
-      "price": 94400,
+      "price": 89500,
       "marketCap": null,
       "h52": null,
       "l52": null,
       "per": null,
-      "pbr": 0.67
+      "pbr": 0.64
     },
     "017670": {
       "name": "SK텔레콤",
       "group": "sk",
-      "price": 91400,
+      "price": 90600,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 53.58,
-      "pbr": 1.47
+      "per": 53.11,
+      "pbr": 1.45
     },
     "326030": {
       "name": "SK바이오팜",
       "group": "sk",
-      "price": 88600,
+      "price": 82900,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 19.89,
-      "pbr": 7.44
+      "per": 18.61,
+      "pbr": 6.97
     },
     "011790": {
       "name": "SKC",
       "group": "sk",
-      "price": 109000,
+      "price": 104000,
       "marketCap": null,
       "h52": null,
       "l52": null,
       "per": null,
-      "pbr": 4.45
+      "pbr": 4.24
     },
     "302440": {
       "name": "SK바이오사이언스",
       "group": "sk",
-      "price": 37000,
+      "price": 34950,
       "marketCap": null,
       "h52": null,
       "l52": null,
       "per": null,
-      "pbr": 1.64
+      "pbr": 1.55
     },
     "018670": {
       "name": "SK가스",
       "group": "sk",
-      "price": 203500,
+      "price": 203000,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 4.68,
+      "per": 4.67,
       "pbr": 0.58
     },
     "361610": {
       "name": "SK아이이테크놀로지",
       "group": "sk",
-      "price": 15240,
+      "price": 14390,
       "marketCap": null,
       "h52": null,
       "l52": null,
       "per": null,
-      "pbr": 0.48
+      "pbr": 0.46
     },
     "395400": {
       "name": "SK리츠",
       "group": "sk",
-      "price": 5620,
+      "price": 5680,
       "marketCap": null,
       "h52": null,
       "l52": null,
@@ -365,62 +365,62 @@
     "475150": {
       "name": "SK이터닉스",
       "group": "sk",
-      "price": 49050,
+      "price": 43200,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 67.28,
-      "pbr": 6.18
+      "per": 59.26,
+      "pbr": 5.44
     },
     "100090": {
       "name": "SK오션플랜트",
       "group": "sk",
-      "price": 16650,
+      "price": 14380,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 23.58,
-      "pbr": 1.26
+      "per": 20.37,
+      "pbr": 1.09
     },
     "001740": {
       "name": "SK네트웍스",
       "group": "sk",
-      "price": 10800,
+      "price": 9710,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 24.77,
-      "pbr": 1.02
+      "per": 22.27,
+      "pbr": 0.92
     },
     "006120": {
       "name": "SK디스커버리",
       "group": "sk",
-      "price": 49550,
+      "price": 51100,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 3.92,
-      "pbr": 0.29
+      "per": 4.04,
+      "pbr": 0.3
     },
     "285130": {
       "name": "SK케미칼",
       "group": "sk",
-      "price": 39200,
+      "price": 37300,
       "marketCap": null,
       "h52": null,
       "l52": null,
-      "per": 60.68,
-      "pbr": 0.34
+      "per": 57.74,
+      "pbr": 0.32
     },
     "210980": {
       "name": "SK디앤디",
       "group": "sk",
-      "price": 11490,
+      "price": 11320,
       "marketCap": null,
       "h52": null,
       "l52": null,
       "per": null,
-      "pbr": 0.39
+      "pbr": 0.38
     }
   }
 }
